@@ -4,13 +4,14 @@
 const adminBtn = document.getElementById('adminBtn');
 const adminModal = document.getElementById('adminModal');
 const closeModal = document.getElementById('closeModal');
-const refreshHealth = document.getElementById('refreshHealth');
-const healthDisplay = document.getElementById('healthDisplay');
-const cookieTextarea = document.getElementById('cookieTextarea');
-const updateCookiesBtn = document.getElementById('updateCookiesBtn');
-const modalStatus = document.getElementById('modalStatus');
 const logsContainer = document.getElementById('logsContainer');
 const clearLogsBtn = document.getElementById('clearLogs');
+
+// Main screen cookie helper elements
+const mainHealthDisplay = document.getElementById('mainHealthDisplay');
+const mainCookieTextarea = document.getElementById('mainCookieTextarea');
+const mainUpdateCookiesBtn = document.getElementById('mainUpdateCookiesBtn');
+const mainCookieStatus = document.getElementById('mainCookieStatus');
 
 let logEventSource = null;
 
@@ -26,7 +27,6 @@ document.addEventListener('keydown', (event) => {
 // Open admin modal (for button if needed)
 adminBtn.addEventListener('click', () => {
   adminModal.classList.add('active');
-  loadHealthStatus();
   connectToLogs();
 });
 
@@ -44,14 +44,10 @@ adminModal.addEventListener('click', (e) => {
   }
 });
 
-// Refresh health status
-refreshHealth.addEventListener('click', () => {
-  loadHealthStatus();
-});
-
-// Load health status
-async function loadHealthStatus() {
-  healthDisplay.innerHTML = '<div class="health-item">Loading...</div>';
+// Load health status for main screen
+async function loadMainHealthStatus() {
+  if (!mainHealthDisplay) return;
+  mainHealthDisplay.innerHTML = '<div class="health-item">Loading...</div>';
   
   try {
     const response = await fetch(`${window.BASE_PATH}/admin/health`);
@@ -82,58 +78,61 @@ async function loadHealthStatus() {
       : `${uptimeHours} hours`;
     html += `<div class="health-item"><span class="health-icon">✅</span> Server uptime: ${uptimeStr}</div>`;
     
-    healthDisplay.innerHTML = html;
+    mainHealthDisplay.innerHTML = html;
   } catch (error) {
-    healthDisplay.innerHTML = `<div class="health-item"><span class="health-icon">❌</span> Error: ${error.message}</div>`;
+    mainHealthDisplay.innerHTML = `<div class="health-item"><span class="health-icon">❌</span> Error: ${error.message}</div>`;
   }
 }
 
-// Update cookies
-updateCookiesBtn.addEventListener('click', async () => {
-  const cookieContent = cookieTextarea.value.trim();
-  
-  if (!cookieContent) {
-    showModalStatus('Please paste cookie content', 'error');
-    return;
-  }
-  
-  updateCookiesBtn.disabled = true;
-  updateCookiesBtn.textContent = 'Updating...';
-  
-  try {
-    const response = await fetch(`${window.BASE_PATH}/admin/update-cookies`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: cookieContent
-    });
+// Update cookies from main screen
+if (mainUpdateCookiesBtn) {
+  mainUpdateCookiesBtn.addEventListener('click', async () => {
+    const cookieContent = mainCookieTextarea.value.trim();
     
-    const result = await response.json();
-    
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Failed to update cookies');
+    if (!cookieContent) {
+      showMainCookieStatus('Please paste cookie content', 'error');
+      return;
     }
     
-    showModalStatus('✅ Cookies updated successfully!', 'success');
-    cookieTextarea.value = '';
+    mainUpdateCookiesBtn.disabled = true;
+    mainUpdateCookiesBtn.textContent = 'Updating...';
     
-    // Refresh health status
-    setTimeout(() => loadHealthStatus(), 500);
-    
-  } catch (error) {
-    showModalStatus(`❌ Error: ${error.message}`, 'error');
-  } finally {
-    updateCookiesBtn.disabled = false;
-    updateCookiesBtn.textContent = 'Update Cookies';
-  }
-});
+    try {
+      const response = await fetch(`${window.BASE_PATH}/admin/update-cookies`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: cookieContent
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Failed to update cookies');
+      }
+      
+      showMainCookieStatus('✅ Cookies updated successfully!', 'success');
+      mainCookieTextarea.value = '';
+      
+      // Refresh health status
+      setTimeout(() => loadMainHealthStatus(), 500);
+      
+    } catch (error) {
+      showMainCookieStatus(`❌ Error: ${error.message}`, 'error');
+    } finally {
+      mainUpdateCookiesBtn.disabled = false;
+      mainUpdateCookiesBtn.textContent = 'Update Cookies';
+    }
+  });
+}
 
-// Show modal status message
-function showModalStatus(message, type) {
-  modalStatus.textContent = message;
-  modalStatus.className = `modal-status ${type} active`;
+// Show main cookie status message
+function showMainCookieStatus(message, type) {
+  if (!mainCookieStatus) return;
+  mainCookieStatus.textContent = message;
+  mainCookieStatus.className = `cookie-update-status ${type} active`;
   
   setTimeout(() => {
-    modalStatus.classList.remove('active');
+    mainCookieStatus.classList.remove('active');
   }, 5000);
 }
 

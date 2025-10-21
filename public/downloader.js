@@ -14,6 +14,7 @@ const progressEta = document.getElementById('progressEta');
 const thumbnailContainer = document.getElementById('thumbnailContainer');
 const thumbnailImage = document.getElementById('thumbnailImage');
 const thumbnailTitle = document.getElementById('thumbnailTitle');
+const cookieHelper = document.getElementById('cookieHelper');
 
 let eventSource = null;
 let currentSessionId = null;
@@ -21,6 +22,32 @@ let currentSessionId = null;
 // Detect BASE_PATH from current URL (e.g., /mp3maker in production, empty in dev)
 window.BASE_PATH = window.BASE_PATH || window.location.pathname.split('/').slice(0, -1).join('/') || '';
 const BASE_PATH = window.BASE_PATH;
+
+// Detect if URL is a YouTube link
+function isYouTubeUrl(url) {
+  return /(?:youtube\.com|youtu\.be)/.test(url);
+}
+
+// Show/hide cookie helper based on URL
+function updateCookieHelper() {
+  const url = urlInput.value.trim();
+  if (url && isYouTubeUrl(url)) {
+    cookieHelper.style.display = 'block';
+    // Load health status when showing cookie helper
+    if (typeof loadMainHealthStatus === 'function') {
+      loadMainHealthStatus();
+    }
+  } else {
+    cookieHelper.style.display = 'none';
+  }
+}
+
+// Listen for URL input changes
+urlInput.addEventListener('input', updateCookieHelper);
+urlInput.addEventListener('paste', () => {
+  // Wait for paste to complete
+  setTimeout(updateCookieHelper, 10);
+});
 
 // Convert button click handler
 convertBtn.addEventListener('click', async () => {
