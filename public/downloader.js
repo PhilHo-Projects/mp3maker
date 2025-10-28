@@ -19,10 +19,6 @@ const cookieHelper = document.getElementById('cookieHelper');
 let eventSource = null;
 let currentSessionId = null;
 
-// Use BASE_PATH and IS_LOCAL from config.js
-const BASE_PATH = window.BASE_PATH || '';
-const IS_LOCAL = window.IS_LOCAL || false;
-
 // Detect if URL is a YouTube link
 function isYouTubeUrl(url) {
   return /(?:youtube\.com|youtu\.be)/.test(url);
@@ -38,7 +34,7 @@ function hideCookieHelper() {
 // Show/hide cookie helper based on URL
 function updateCookieHelper() {
   // Never show cookie helper in local development
-  if (IS_LOCAL) {
+  if (window.IS_LOCAL) {
     hideCookieHelper();
     return;
   }
@@ -82,7 +78,7 @@ convertBtn.addEventListener('click', async () => {
 
   try {
     // Start download
-    const response = await fetch(`${BASE_PATH}/download`, {
+    const response = await fetch(`${window.BASE_PATH}/download`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url })
@@ -116,7 +112,7 @@ function connectToProgress(sessionId) {
   }
 
   // Create new SSE connection
-  eventSource = new EventSource(`${BASE_PATH}/progress/${sessionId}`);
+  eventSource = new EventSource(`${window.BASE_PATH}/progress/${sessionId}`);
 
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -164,7 +160,7 @@ downloadReadyBtn.addEventListener('click', () => {
   
   // Create download link
   const link = document.createElement('a');
-  link.href = `${BASE_PATH}/file/${currentSessionId}`;
+  link.href = `${window.BASE_PATH}/file/${currentSessionId}`;
   link.download = 'audio.mp3';
   document.body.appendChild(link);
   link.click();
@@ -253,20 +249,20 @@ function hideThumbnail() {
 // Fetch and display thumbnail
 async function fetchThumbnail(sessionId) {
   try {
-    const response = await fetch(`${BASE_PATH}/thumbnail/${sessionId}`);
+    const response = await fetch(`${window.BASE_PATH}/thumbnail/${sessionId}`);
     if (response.ok) {
       const data = await response.json();
       thumbnailImage.src = data.thumbnailUrl;
       thumbnailImage.onerror = () => {
         // Fallback to oops.jpg if thumbnail fails to load
-        thumbnailImage.src = `${BASE_PATH}/oops.jpg`;
+        thumbnailImage.src = `${window.BASE_PATH}/oops.jpg`;
       };
       showThumbnail();
     }
   } catch (error) {
     console.error('Failed to fetch thumbnail:', error);
     // Use fallback image
-    thumbnailImage.src = `${BASE_PATH}/oops.jpg`;
+    thumbnailImage.src = `${window.BASE_PATH}/oops.jpg`;
     showThumbnail();
   }
 }
