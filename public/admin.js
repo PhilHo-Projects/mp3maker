@@ -1,5 +1,8 @@
 // Admin panel functionality
 
+// Use BASE_PATH from config.js
+const BASE_PATH = window.BASE_PATH || '';
+
 // DOM elements
 const adminBtn = document.getElementById('adminBtn');
 const adminModal = document.getElementById('adminModal');
@@ -50,7 +53,7 @@ async function loadMainHealthStatus() {
   mainHealthDisplay.innerHTML = '<div class="health-item">Loading...</div>';
   
   try {
-    const response = await fetch(`${window.BASE_PATH}/admin/health`);
+    const response = await fetch(`${BASE_PATH}/admin/health`);
     if (!response.ok) throw new Error('Failed to load health status');
     
     const data = await response.json();
@@ -98,7 +101,7 @@ if (mainUpdateCookiesBtn) {
     mainUpdateCookiesBtn.textContent = 'Updating...';
     
     try {
-      const response = await fetch(`${window.BASE_PATH}/admin/update-cookies`, {
+      const response = await fetch(`${BASE_PATH}/admin/update-cookies`, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: cookieContent
@@ -149,7 +152,7 @@ function connectToLogs() {
   
   logsContainer.innerHTML = '<div class="log-line">Connecting to log stream...</div>';
   
-  logEventSource = new EventSource(`${window.BASE_PATH}/admin/logs`);
+  logEventSource = new EventSource(`${BASE_PATH}/admin/logs`);
   
   logEventSource.onmessage = (event) => {
     const log = JSON.parse(event.data);

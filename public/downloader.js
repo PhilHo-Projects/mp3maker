@@ -19,12 +19,9 @@ const cookieHelper = document.getElementById('cookieHelper');
 let eventSource = null;
 let currentSessionId = null;
 
-// Detect BASE_PATH from current URL (e.g., /mp3maker in production, empty in dev)
-window.BASE_PATH = window.BASE_PATH || window.location.pathname.split('/').slice(0, -1).join('/') || '';
-const BASE_PATH = window.BASE_PATH;
-
-// Detect if running locally (localhost or 127.0.0.1)
-const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// Use BASE_PATH and IS_LOCAL from config.js
+const BASE_PATH = window.BASE_PATH || '';
+const IS_LOCAL = window.IS_LOCAL || false;
 
 // Detect if URL is a YouTube link
 function isYouTubeUrl(url) {
