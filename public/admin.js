@@ -116,6 +116,11 @@ if (mainUpdateCookiesBtn) {
       // Refresh health status
       setTimeout(() => loadMainHealthStatus(), 500);
       
+      // Hide the entire cookie helper section after successful update
+      if (typeof hideCookieHelper === 'function') {
+        setTimeout(() => hideCookieHelper(), 2000); // Give user time to see success message
+      }
+      
     } catch (error) {
       showMainCookieStatus(`❌ Error: ${error.message}`, 'error');
     } finally {

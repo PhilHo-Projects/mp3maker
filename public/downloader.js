@@ -23,13 +23,29 @@ let currentSessionId = null;
 window.BASE_PATH = window.BASE_PATH || window.location.pathname.split('/').slice(0, -1).join('/') || '';
 const BASE_PATH = window.BASE_PATH;
 
+// Detect if running locally (localhost or 127.0.0.1)
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
 // Detect if URL is a YouTube link
 function isYouTubeUrl(url) {
   return /(?:youtube\.com|youtu\.be)/.test(url);
 }
 
+// Hide cookie helper section (used for local env and after cookie update in prod)
+function hideCookieHelper() {
+  if (cookieHelper) {
+    cookieHelper.style.display = 'none';
+  }
+}
+
 // Show/hide cookie helper based on URL
 function updateCookieHelper() {
+  // Never show cookie helper in local development
+  if (IS_LOCAL) {
+    hideCookieHelper();
+    return;
+  }
+  
   const url = urlInput.value.trim();
   if (url && isYouTubeUrl(url)) {
     cookieHelper.style.display = 'block';

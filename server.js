@@ -7,6 +7,12 @@ const { execSync } = require('child_process');
 // Use system yt-dlp if available (more up-to-date than bundled version)
 process.env.YTDL_PATH = process.env.YTDL_PATH || 'yt-dlp';
 
+// Set ffmpeg location for yt-dlp (winget install location)
+const ffmpegPath = path.join(process.env.LOCALAPPDATA, 'Microsoft', 'WinGet', 'Packages', 'Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe', 'ffmpeg-8.0-full_build', 'bin');
+if (fs.existsSync(path.join(ffmpegPath, 'ffmpeg.exe'))) {
+  process.env.FFMPEG_PATH = ffmpegPath;
+}
+
 const app = express();
 
 // Configuration
@@ -166,19 +172,17 @@ async function downloadAudio(url, sessionId, platform) {
       const hasCookies = IS_PRODUCTION && fs.existsSync(cookiePath);
       
       // Strategy: 
-      // - Local: No special options (fastest, works perfectly)
-      // - Production with cookies: Use web client with cookies (bypasses bot detection)
-      // - Production without cookies: Use iOS/Android (bypasses SABR)
-      const infoClientStrategy = IS_PRODUCTION && platform === 'youtube' && !hasCookies
+      // - With cookies: Use web client with cookies (bypasses bot detection)
+      // - Without cookies: Use iOS/Android (bypasses SABR and 403 errors)
+      // Note: Always use iOS/Android for YouTube to avoid 403 Forbidden errors
+      const infoClientStrategy = platform === 'youtube' && !hasCookies
         ? 'youtube:player_client=ios,android'
         : undefined;
       
       if (hasCookies) {
-        log('Using cookies.txt for info fetch (production)', 'INFO');
+        log('Using cookies.txt for info fetch', 'INFO');
       } else if (infoClientStrategy) {
-        log('Using iOS/Android client for info fetch (production, no cookies)', 'INFO');
-      } else if (!IS_PRODUCTION) {
-        log('Using default yt-dlp (local)', 'INFO');
+        log('Using iOS/Android client for info fetch (bypasses 403)', 'INFO');
       }
       
       const titleOutput = await Promise.race([
@@ -236,19 +240,17 @@ async function downloadAudio(url, sessionId, platform) {
     const hasCookies = IS_PRODUCTION && fs.existsSync(cookiePath);
     
     // Strategy: 
-    // - Local: No special options (fastest, works perfectly)
-    // - Production with cookies: Use web client with cookies (bypasses bot detection)
-    // - Production without cookies: Use iOS/Android (bypasses SABR)
-    const clientStrategy = IS_PRODUCTION && platform === 'youtube' && !hasCookies
+    // - With cookies: Use web client with cookies (bypasses bot detection)
+    // - Without cookies: Use iOS/Android (bypasses SABR and 403 errors)
+    // Note: Always use iOS/Android for YouTube to avoid 403 Forbidden errors
+    const clientStrategy = platform === 'youtube' && !hasCookies
       ? 'youtube:player_client=ios,android'
       : undefined;
     
     if (hasCookies) {
-      log('Using cookies.txt for authentication (production)', 'INFO');
+      log('Using cookies.txt for authentication', 'INFO');
     } else if (clientStrategy) {
-      log('Using iOS/Android client (production, no cookies)', 'INFO');
-    } else if (!IS_PRODUCTION) {
-      log('Using default yt-dlp (local)', 'INFO');
+      log('Using iOS/Android client (bypasses 403)', 'INFO');
     }
     
     const ytDlpProcess = ytDlp.exec(url, {
@@ -260,6 +262,7 @@ async function downloadAudio(url, sessionId, platform) {
       embedThumbnail: true,
       output: tempFileBase,
       noPlaylist: true,
+      ...(process.env.FFMPEG_PATH && { ffmpegLocation: process.env.FFMPEG_PATH }),
       ...(clientStrategy && { extractorArgs: clientStrategy }),
       ...(hasCookies && { cookies: cookiePath })
       // Local: raw yt-dlp | Production: iOS/Android or web+cookies
