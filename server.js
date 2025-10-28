@@ -7,10 +7,13 @@ const { execSync } = require('child_process');
 // Use system yt-dlp if available (more up-to-date than bundled version)
 process.env.YTDL_PATH = process.env.YTDL_PATH || 'yt-dlp';
 
-// Set ffmpeg location for yt-dlp (winget install location)
-const ffmpegPath = path.join(process.env.LOCALAPPDATA, 'Microsoft', 'WinGet', 'Packages', 'Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe', 'ffmpeg-8.0-full_build', 'bin');
-if (fs.existsSync(path.join(ffmpegPath, 'ffmpeg.exe'))) {
-  process.env.FFMPEG_PATH = ffmpegPath;
+// Set ffmpeg location for yt-dlp (Windows winget install location)
+// On Linux, ffmpeg should be in system PATH
+if (process.env.LOCALAPPDATA) {
+  const ffmpegPath = path.join(process.env.LOCALAPPDATA, 'Microsoft', 'WinGet', 'Packages', 'Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe', 'ffmpeg-8.0-full_build', 'bin');
+  if (fs.existsSync(path.join(ffmpegPath, 'ffmpeg.exe'))) {
+    process.env.FFMPEG_PATH = ffmpegPath;
+  }
 }
 
 const app = express();
