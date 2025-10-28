@@ -174,16 +174,14 @@ async function downloadAudio(url, sessionId, platform) {
       const cookiePath = path.join(__dirname, 'cookies.txt');
       const hasCookies = IS_PRODUCTION && fs.existsSync(cookiePath);
       
-      // Strategy: 
-      // - With cookies: Use web client with cookies (bypasses bot detection)
-      // - Without cookies: Use iOS/Android (bypasses SABR and 403 errors)
-      // Note: Always use iOS/Android for YouTube to avoid 403 Forbidden errors
-      const infoClientStrategy = platform === 'youtube' && !hasCookies
+      // Strategy: Always use iOS/Android client for YouTube (bypasses 403)
+      // Add cookies on top if available for better success rate
+      const infoClientStrategy = platform === 'youtube'
         ? 'youtube:player_client=ios,android'
         : undefined;
       
-      if (hasCookies) {
-        log('Using cookies.txt for info fetch', 'INFO');
+      if (hasCookies && infoClientStrategy) {
+        log('Using iOS/Android client + cookies for info fetch', 'INFO');
       } else if (infoClientStrategy) {
         log('Using iOS/Android client for info fetch (bypasses 403)', 'INFO');
       }
@@ -242,16 +240,14 @@ async function downloadAudio(url, sessionId, platform) {
     const cookiePath = path.join(__dirname, 'cookies.txt');
     const hasCookies = IS_PRODUCTION && fs.existsSync(cookiePath);
     
-    // Strategy: 
-    // - With cookies: Use web client with cookies (bypasses bot detection)
-    // - Without cookies: Use iOS/Android (bypasses SABR and 403 errors)
-    // Note: Always use iOS/Android for YouTube to avoid 403 Forbidden errors
-    const clientStrategy = platform === 'youtube' && !hasCookies
+    // Strategy: Always use iOS/Android client for YouTube (bypasses 403)
+    // Add cookies on top if available for better success rate
+    const clientStrategy = platform === 'youtube'
       ? 'youtube:player_client=ios,android'
       : undefined;
     
-    if (hasCookies) {
-      log('Using cookies.txt for authentication', 'INFO');
+    if (hasCookies && clientStrategy) {
+      log('Using iOS/Android client + cookies (best chance)', 'INFO');
     } else if (clientStrategy) {
       log('Using iOS/Android client (bypasses 403)', 'INFO');
     }
