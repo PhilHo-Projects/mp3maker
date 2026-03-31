@@ -10,9 +10,6 @@ public/temp/
 # Environment variables
 .env
 
-# Cookies (sensitive data)
-cookies.txt
-
 # OS files
 .DS_Store
 Thumbs.db

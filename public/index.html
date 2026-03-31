@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Audio Downloader</title>
+  <title>MP3 Maker</title>
   <link rel="stylesheet" href="styles.css">
   <script src="config.js"></script>
   <script src="background.js" defer></script>
@@ -10,18 +10,23 @@
   <script src="admin.js" defer></script>
 </head>
 <body>
-  <!-- Admin button -->
   <button class="admin-btn" id="adminBtn">⚙</button>
-  
-  <!-- Admin modal -->
+
   <div class="modal-overlay" id="adminModal">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Server Logs</div>
+        <div class="modal-title">Server Console</div>
         <button class="modal-close" id="closeModal">&times;</button>
       </div>
-      
+
       <div class="modal-content-logs">
+        <div class="admin-health-panel">
+          <div class="admin-health-title">System Status</div>
+          <div class="admin-health-display" id="adminHealthDisplay">
+            <div class="health-item">Loading...</div>
+          </div>
+        </div>
+
         <div class="logs-header">
           <div class="logs-title">Real-time Server Logs</div>
           <button class="clear-logs-btn" id="clearLogs">Clear</button>
@@ -32,47 +37,11 @@
       </div>
     </div>
   </div>
-  
+
   <div class="container">
-    <input type="text" id="url" placeholder="Paste YouTube, SoundCloud or Bandcamp URL">
+    <input type="text" id="url" placeholder="Paste SoundCloud or Bandcamp URL">
     <button id="download">Convert</button>
-    
-    <!-- YouTube Cookie Helper (shown only for YouTube links) -->
-    <div class="cookie-helper" id="cookieHelper" style="display: none;">
-      <div class="cookie-helper-header">
-        <span class="cookie-helper-icon">🍪</span>
-        <span class="cookie-helper-title">YouTube Cookie Required</span>
-      </div>
-      <div class="cookie-helper-content">
-        <p class="cookie-helper-text">
-          For YouTube downloads, you'll need to paste your cookies:
-        </p>
-        <ol class="cookie-helper-steps">
-          <li>Install the <a href="https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc" target="_blank" rel="noopener">Get cookies.txt LOCALLY</a> Chrome extension</li>
-          <li>Go to <a href="https://www.youtube.com" target="_blank" rel="noopener">youtube.com</a> (must be on a YouTube page)</li>
-          <li>Click the extension icon and copy the cookies</li>
-          <li>Paste them in the box below and click Update</li>
-        </ol>
-        
-        <!-- System Status -->
-        <div class="cookie-status-section">
-          <div class="cookie-status-title">System Status</div>
-          <div id="mainHealthDisplay" class="cookie-health-display">
-            <div class="health-item">Loading...</div>
-          </div>
-        </div>
-        
-        <!-- Cookie Textarea -->
-        <textarea 
-          id="mainCookieTextarea" 
-          class="cookie-textarea-main" 
-          placeholder="Paste cookies.txt content here&#10;&#10;# Netscape HTTP Cookie File&#10;.youtube.com	TRUE	/	..."></textarea>
-        <button class="update-cookies-btn-main" id="mainUpdateCookiesBtn">Update Cookies</button>
-        <div id="mainCookieStatus" class="cookie-update-status"></div>
-      </div>
-    </div>
-    
-    <!-- Progress container -->
+
     <div class="progress-container" id="progressContainer">
       <div class="status-text" id="statusText">Initializing...</div>
       <div class="progress-bar-wrapper">
@@ -84,16 +53,14 @@
         <span id="progressEta"></span>
       </div>
     </div>
-    
+
     <div id="status" class="status"></div>
-    
-    <!-- Thumbnail display -->
+
     <div class="thumbnail-container" id="thumbnailContainer">
       <img id="thumbnailImage" src="" alt="Video thumbnail">
       <div class="thumbnail-title" id="thumbnailTitle"></div>
     </div>
-    
-    <!-- Download ready button -->
+
     <button id="downloadReady" style="display: none; margin-top: 20px; background: #51cf66;">Download MP3</button>
   </div>
 </body>

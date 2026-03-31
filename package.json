@@ -1,7 +1,7 @@
 {
-  "name": "youtube-to-mp3-converter",
+  "name": "mp3maker",
   "version": "1.0.0",
-  "description": "A simple YouTube to MP3 converter with Express backend",
+  "description": "A simple SoundCloud and Bandcamp to MP3 converter with Express backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -10,9 +10,9 @@
     "node": ">=18"
   },
   "keywords": [
-    "youtube",
+    "soundcloud",
+    "bandcamp",
     "mp3",
-    "converter",
     "download"
   ],
   "author": "",

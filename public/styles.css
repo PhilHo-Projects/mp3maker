@@ -1,8 +1,8 @@
 /* Reset & Base Styles */
-* { 
-  margin: 0; 
-  padding: 0; 
-  box-sizing: border-box; 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -43,8 +43,8 @@ input {
   transition: border-color 0.2s;
 }
 
-input:focus { 
-  border-color: #4a4a4a; 
+input:focus {
+  border-color: #4a4a4a;
 }
 
 button {
@@ -60,183 +60,14 @@ button {
   transition: background 0.2s;
 }
 
-button:hover { 
-  background: #e0e0e0; 
+button:hover {
+  background: #e0e0e0;
 }
 
 button:disabled {
   background: #2a2a2a;
   color: #666;
   cursor: not-allowed;
-}
-
-/* Cookie Helper (shown for YouTube links) */
-.cookie-helper {
-  margin-top: 16px;
-  padding: 16px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.cookie-helper-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.cookie-helper-icon {
-  font-size: 20px;
-}
-
-.cookie-helper-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #ffd43b;
-}
-
-.cookie-helper-content {
-  font-size: 14px;
-  color: #ccc;
-  line-height: 1.6;
-}
-
-.cookie-helper-text {
-  margin-bottom: 12px;
-}
-
-.cookie-helper-steps {
-  margin-left: 20px;
-  margin-bottom: 0;
-}
-
-.cookie-helper-steps li {
-  margin-bottom: 8px;
-  color: #aaa;
-}
-
-.cookie-helper-steps a {
-  color: #74c0fc;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.cookie-helper-steps a:hover {
-  color: #91d7ff;
-  text-decoration: underline;
-}
-
-/* Cookie Status Section in Main Screen */
-.cookie-status-section {
-  margin-top: 20px;
-  padding: 16px;
-  background: #0f0f0f;
-  border-radius: 8px;
-  border: 1px solid #2a2a2a;
-  margin-bottom: 16px;
-}
-
-.cookie-status-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.cookie-health-display {
-  font-size: 13px;
-}
-
-.cookie-health-display .health-item {
-  display: flex;
-  align-items: center;
-  padding: 6px 0;
-  color: #ccc;
-  font-size: 13px;
-}
-
-.cookie-health-display .health-icon {
-  margin-right: 8px;
-  font-size: 14px;
-}
-
-/* Cookie Textarea in Main Screen */
-.cookie-textarea-main {
-  width: 100%;
-  min-height: 200px;
-  padding: 12px;
-  background: #0f0f0f;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  color: #e0e0e0;
-  font-family: 'Monaco', 'Menlo', monospace;
-  font-size: 12px;
-  resize: vertical;
-  outline: none;
-  margin-bottom: 12px;
-  transition: border-color 0.2s;
-}
-
-.cookie-textarea-main:focus {
-  border-color: #4a4a4a;
-}
-
-.update-cookies-btn-main {
-  width: 100%;
-  padding: 12px;
-  background: #51cf66;
-  color: #0a0a0a;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.update-cookies-btn-main:hover {
-  background: #40c057;
-}
-
-.update-cookies-btn-main:disabled {
-  background: #2a2a2a;
-  color: #666;
-  cursor: not-allowed;
-}
-
-.cookie-update-status {
-  padding: 12px;
-  border-radius: 6px;
-  margin-top: 12px;
-  font-size: 13px;
-  text-align: center;
-  display: none;
-}
-
-.cookie-update-status.active {
-  display: block;
-}
-
-.cookie-update-status.success {
-  background: #1a2a1a;
-  color: #51cf66;
-}
-
-.cookie-update-status.error {
-  background: #2a1a1a;
-  color: #ff6b6b;
 }
 
 /* Progress Container */
@@ -358,19 +189,19 @@ button:disabled {
   display: block;
 }
 
-.error { 
-  background: #2a1a1a; 
-  color: #ff6b6b; 
+.error {
+  background: #2a1a1a;
+  color: #ff6b6b;
 }
 
-.success { 
-  background: #1a2a1a; 
-  color: #51cf66; 
+.success {
+  background: #1a2a1a;
+  color: #51cf66;
 }
 
-.loading { 
-  background: #1a1a2a; 
-  color: #74c0fc; 
+.loading {
+  background: #1a1a2a;
+  color: #74c0fc;
 }
 
 /* Admin Button - Small circle in top-right corner */
@@ -438,6 +269,26 @@ button:disabled {
   flex-direction: column;
   background: #0a0a0a;
   overflow: hidden;
+}
+
+.admin-health-panel {
+  padding: 16px 20px;
+  border-bottom: 1px solid #2a2a2a;
+  background: #111;
+}
+
+.admin-health-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-health-display {
+  display: grid;
+  gap: 6px;
 }
 
 /* Logs Section */

@@ -14,60 +14,19 @@ const progressEta = document.getElementById('progressEta');
 const thumbnailContainer = document.getElementById('thumbnailContainer');
 const thumbnailImage = document.getElementById('thumbnailImage');
 const thumbnailTitle = document.getElementById('thumbnailTitle');
-const cookieHelper = document.getElementById('cookieHelper');
 
 let eventSource = null;
 let currentSessionId = null;
 
-// Detect if URL is a YouTube link
-function isYouTubeUrl(url) {
-  return /(?:youtube\.com|youtu\.be)/.test(url);
-}
-
-// Hide cookie helper section (used for local env and after cookie update in prod)
-function hideCookieHelper() {
-  if (cookieHelper) {
-    cookieHelper.style.display = 'none';
-  }
-}
-
-// Show/hide cookie helper based on URL
-function updateCookieHelper() {
-  // Never show cookie helper in local development
-  if (window.IS_LOCAL) {
-    hideCookieHelper();
-    return;
-  }
-  
-  const url = urlInput.value.trim();
-  if (url && isYouTubeUrl(url)) {
-    cookieHelper.style.display = 'block';
-    // Load health status when showing cookie helper
-    if (typeof loadMainHealthStatus === 'function') {
-      loadMainHealthStatus();
-    }
-  } else {
-    cookieHelper.style.display = 'none';
-  }
-}
-
-// Listen for URL input changes
-urlInput.addEventListener('input', updateCookieHelper);
-urlInput.addEventListener('paste', () => {
-  // Wait for paste to complete
-  setTimeout(updateCookieHelper, 10);
-});
-
 // Convert button click handler
 convertBtn.addEventListener('click', async () => {
   const url = urlInput.value.trim();
-  
+
   if (!url) {
-    showStatus('Please enter a YouTube, SoundCloud or Bandcamp URL', 'error');
+    showStatus('Please enter a SoundCloud or Bandcamp URL', 'error');
     return;
   }
 
-  // Reset UI
   convertBtn.disabled = true;
   downloadReadyBtn.style.display = 'none';
   hideStatus();
@@ -77,7 +36,6 @@ convertBtn.addEventListener('click', async () => {
   currentSessionId = null;
 
   try {
-    // Start download
     const response = await fetch(`${window.BASE_PATH}/download`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -89,14 +47,10 @@ convertBtn.addEventListener('click', async () => {
       throw new Error(error.error || 'Download failed');
     }
 
-    const { sessionId, platform } = await response.json();
-    
-    // Update status with loading animation
+    const { sessionId } = await response.json();
+
     updateStatus('Starting conversion...', 0, null, null, true);
-
-    // Connect to SSE for progress updates
     connectToProgress(sessionId);
-
   } catch (error) {
     hideProgress();
     showStatus(error.message, 'error');
@@ -106,41 +60,34 @@ convertBtn.addEventListener('click', async () => {
 
 // Connect to progress SSE stream
 function connectToProgress(sessionId) {
-  // Close existing connection
   if (eventSource) {
     eventSource.close();
   }
 
-  // Create new SSE connection
   eventSource = new EventSource(`${window.BASE_PATH}/progress/${sessionId}`);
 
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    
+
     if (data.status === 'error' || data.error) {
-      // Error occurred
       hideProgress();
       showStatus(data.message || data.error, 'error');
       convertBtn.disabled = false;
       eventSource.close();
     } else if (data.status === 'complete') {
-      // Download complete - show download button
       updateStatus(data.message || 'Ready to download!', 100);
       currentSessionId = sessionId;
-      
-      // Fetch and display thumbnail
+
       fetchThumbnail(sessionId);
-      
-      // Show download button
+
       setTimeout(() => {
         hideProgress();
         downloadReadyBtn.style.display = 'block';
         convertBtn.disabled = false;
       }, 500);
-      
+
       eventSource.close();
     } else {
-      // Update progress - handle both 'progress' and 'percent' keys
       const percent = data.percent !== undefined ? data.percent : data.progress || 0;
       const message = data.message || data.status || 'Processing...';
       const isFetching = data.status === 'fetching';
@@ -157,21 +104,18 @@ function connectToProgress(sessionId) {
 // Download ready button click handler
 downloadReadyBtn.addEventListener('click', () => {
   if (!currentSessionId) return;
-  
-  // Create download link
+
   const link = document.createElement('a');
   link.href = `${window.BASE_PATH}/file/${currentSessionId}`;
   link.download = 'audio.mp3';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  
-  // Hide button, thumbnail and show success
+
   downloadReadyBtn.style.display = 'none';
   hideThumbnail();
   showStatus('Downloaded! Check your Downloads folder', 'success');
-  
-  // Reset after a few seconds
+
   setTimeout(() => {
     hideStatus();
     currentSessionId = null;
@@ -181,8 +125,7 @@ downloadReadyBtn.addEventListener('click', () => {
 // Update progress display
 function updateStatus(statusMsg, progress, speed = null, eta = null, isFetching = false) {
   statusText.textContent = statusMsg;
-  
-  // Add loading animation class during fetch
+
   if (isFetching) {
     statusText.classList.add('loading');
     progressBar.classList.add('fetching');
@@ -191,22 +134,21 @@ function updateStatus(statusMsg, progress, speed = null, eta = null, isFetching 
     progressBar.classList.remove('fetching');
     progressBar.style.width = `${progress}%`;
   }
-  
+
   progressPercent.textContent = `${Math.round(progress)}%`;
-  
+
   if (speed) {
     progressSpeed.textContent = `⚡ ${speed}`;
   } else {
     progressSpeed.textContent = '';
   }
-  
+
   if (eta) {
     progressEta.textContent = `⏱ ${eta}`;
   } else {
     progressEta.textContent = '';
   }
 
-  // Update status text color
   if (progress === 100) {
     statusText.className = 'status-text success';
   } else {
@@ -254,14 +196,12 @@ async function fetchThumbnail(sessionId) {
       const data = await response.json();
       thumbnailImage.src = data.thumbnailUrl;
       thumbnailImage.onerror = () => {
-        // Fallback to oops.jpg if thumbnail fails to load
         thumbnailImage.src = `${window.BASE_PATH}/oops.jpg`;
       };
       showThumbnail();
     }
   } catch (error) {
     console.error('Failed to fetch thumbnail:', error);
-    // Use fallback image
     thumbnailImage.src = `${window.BASE_PATH}/oops.jpg`;
     showThumbnail();
   }

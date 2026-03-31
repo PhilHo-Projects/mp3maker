@@ -7,11 +7,13 @@ module.exports = {
     interpreter: '/usr/bin/node',
     env: {
       NODE_ENV: 'development',
-      BASE_PATH: ''
+      BASE_PATH: '',
+      YTDLP_BIN: 'yt-dlp'
     },
     env_production: {
       NODE_ENV: 'production',
-      BASE_PATH: '/mp3maker'
+      BASE_PATH: '/mp3maker',
+      YTDLP_BIN: 'yt-dlp'
     }
   }]
 };

@@ -29,10 +29,9 @@ jobs:
             git clone git@github.com:PhilippeHo27/mp3maker.git .
           fi
 
-          # Ensure Python is installed (required for yt-dlp)
-          if ! command -v python3 &> /dev/null; then
-            sudo apt update && sudo apt install -y python3 python-is-python3
-          fi
+          # Ensure runtime dependencies are available for the shared yt-dlp pipeline
+          sudo apt update
+          sudo apt install -y python3 python-is-python3 yt-dlp ffmpeg
 
           # Install dependencies
           npm install --production
